@@ -2,10 +2,11 @@ import Axios, { AxiosInstance } from 'axios';
 import { Account } from '../lobby/types';
 import * as puppeteer from 'puppeteer';
 import {
+    ResourceProductionList,
     ResourceList, ResourceFactoryList, Upgrade, ResourceType,
     FacilitiesList, ResearchList, ShipList, Ship, DefenseList, Defense, Building, BuildingLight, BuildingList,
 } from './types';
-import { loadMinesAndStorage, loadResources } from './parsing/resources';
+import { loadMinesAndStorage, loadResources, loadResourceProductionList } from './parsing/resources';
 import { loadFacilities } from './parsing/facilities';
 import { loadResearch } from './parsing/research';
 import { loadShips, createShipFromPannel } from './parsing/ship';
@@ -29,20 +30,20 @@ export class GameApi {
      * @hidden
      */
     constructor(cookie: string, account: Account, loginUrl: string) {
-        this.cookie = cookie;
+        // this.cookie = cookie;
         this.loginUrl = loginUrl;
         this.account = account;
         this.axios = Axios.create({
           withCredentials: true,
           baseURL: this.__getServerUrl(),
         });
-        this.axios.interceptors.request.use(config => {
-            if (!config.headers.cookie) {
-                config.headers.cookie = '';
-            }
-            config.headers.cookie += cookie;
-            return config;
-        });
+        //this.axios.interceptors.request.use(config => {
+            //if (!config.headers.cookie) {
+                //config.headers.cookie = '';
+            //}
+            //config.headers.cookie += cookie;
+            //return config;
+        //});
         this.navigation = new Navigation(this.__getServerUrl());
     }
 
@@ -52,13 +53,13 @@ export class GameApi {
     async start(): Promise<void> {
         this.browser = await puppeteer.launch();
         this.page = await this.browser.newPage();
-        const [name, other] = this.cookie.split('=');
-        const [value] = other.split(';');
-        await this.page.setCookie({
-            name,
-            value,
-            url: this.__getServerUrl(),
-        });
+        //const [name, other] = this.cookie.split('=');
+        //const [value] = other.split(';');
+        //await this.page.setCookie({
+            //name,
+            //value,
+            //url: this.__getServerUrl(),
+        //});
         await this.page.setViewport({
             width: 1280,
             height: 960,
@@ -83,6 +84,11 @@ export class GameApi {
     async resourcesList(): Promise<ResourceList> {
         await this.navigation.goToHomePage(this.page);
         return loadResources(this.page);
+    }
+
+    async resourceProductionList(): Promise<ResourceProductionList> {
+        await this.navigation.goToHomePage(this.page);
+        return loadResourceProductionList(this.page);
     }
 
     /**

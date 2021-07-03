@@ -4,6 +4,9 @@ export type RecordConditional<K extends keyof any, T> = {
     [P in K]?: T;
 };
 
+export type ResourceProductionType = 'metalPerHour' | 'crystalPerHour' | 'deuteriumPerHour';
+export type ResourceProductionList = Record<ResourceProductionType, number>;
+
 export type ResourceType = 'metal' | 'crystal' | 'deuterium' | 'energy' | 'darkmatter';
 export const ALL_RESOURCES: ResourceType[] = ['metal', 'crystal', 'deuterium', 'energy', 'darkmatter'];
 export type ResourceList = Record<ResourceType, number>;

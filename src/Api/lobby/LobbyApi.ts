@@ -39,7 +39,8 @@ export class LobbyApi {
         platformGameId: "1dfd8e7e-6e1a-4eb1-8c64-03c3b62efd2f",
       });
       const { token } = response.data;
-      this.cookie = response.headers['set-cookie'][0];
+      this.cookie = '';
+      //this.cookie = response.headers['set-cookie'][0];
       axios.interceptors.request.use(config => {
         config.headers.cookie = this.cookie;
         config.headers.authorization = `Bearer ${token}`;
@@ -47,6 +48,7 @@ export class LobbyApi {
       });
       await this.refreshUser();
     } catch (e) {
+      console.error(e);
       throw new Error('Failed to login');
     }
   }
